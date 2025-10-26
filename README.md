@@ -9,8 +9,8 @@
 
 ### 1. Clone
 ```bash
-git clone <repo-url>
-cd <project-folder>
+git clone git@github.com:Kenobichek/qt-opencv-pong.git
+cd qt-opencv-pong
 ```
 
 ### 2. Build Docker image
