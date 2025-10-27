@@ -4,21 +4,14 @@
 #include "../detector/OpenCVHandDetector.h"
 #include "../renderer/QtRenderer.h"
 #include "../updater/QtFrameUpdater.h"
-#include <QLabel>
 
 std::unique_ptr<GameContext> GameBuilder::build(int &argc, char **argv) {
 	auto ctx = std::make_unique<GameContext>();
 
 	ctx->app = std::make_unique<QtApp>(argc, argv);
-
-	auto label = new QLabel();
-	label->setWindowTitle("Camera Pong");
-	label->resize(640, 480);
-	label->show();
-
 	ctx->camera = std::make_unique<OpenCVCamera>();
 	ctx->handDetector = std::make_unique<OpenCVHandDetector>();
-	ctx->renderer = std::make_unique<QtRenderer>(label);
+	ctx->renderer = std::make_unique<QtRenderer>();
 	ctx->frameUpdater = std::make_unique<QtFrameUpdater>();
 
 	int camIndex = (argc > 1) ? std::stoi(argv[1]) : 0;

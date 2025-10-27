@@ -5,7 +5,9 @@
 
 class QtRenderer : public Renderer {
 	public:
-		explicit QtRenderer(QLabel* label) : label_(label) {}
+		QtRenderer();
+		~QtRenderer();
+		
 		void render(const Frame& frame, const std::vector<Rect>& hands) override;
 
 	private:
