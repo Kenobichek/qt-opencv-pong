@@ -4,6 +4,7 @@
 #include "../detector/OpenCVHandDetector.h"
 #include "../renderer/QtRenderer.h"
 #include "../updater/QtFrameUpdater.h"
+#include "../game/DefaultGameLogic.h"
 
 std::unique_ptr<GameContext> GameBuilder::build(int &argc, char **argv) {
 	auto ctx = std::make_unique<GameContext>();
@@ -13,6 +14,7 @@ std::unique_ptr<GameContext> GameBuilder::build(int &argc, char **argv) {
 	ctx->handDetector = std::make_unique<OpenCVHandDetector>();
 	ctx->renderer = std::make_unique<QtRenderer>();
 	ctx->frameUpdater = std::make_unique<QtFrameUpdater>();
+	ctx->gameLogic = std::make_unique<DefaultGameLogic>();
 
 	int camIndex = (argc > 1) ? std::stoi(argv[1]) : 0;
 	ctx->camera->open(camIndex);

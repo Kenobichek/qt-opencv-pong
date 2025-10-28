@@ -8,7 +8,7 @@ class QtRenderer : public Renderer {
 		QtRenderer();
 		~QtRenderer();
 		
-		void render(const Frame& frame, const std::vector<Rect>& hands) override;
+		void render(const Frame& frame, const GameState& state) override;
 
 	private:
 		QLabel* label_;
