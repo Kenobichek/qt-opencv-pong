@@ -22,3 +22,8 @@ docker build -t camera-ping-pong .
 ```bash
 ./run.sh
 ```
+
+### 4. Run tests
+```bash
+./run_tests.sh
+```
