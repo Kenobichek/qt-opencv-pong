@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+IMAGE_NAME="camera-ping-pong"
+PROJECT_DIR="$(pwd)"
+
 xhost +local:docker
 
 VIDEO_DEVS=$(ls /dev/video* 2>/dev/null)
@@ -11,9 +14,11 @@ done
 
 docker run --rm \
   -e DISPLAY=$DISPLAY \
-  -e XDG_RUNTIME_DIR=/tmp/runtime-root \
-  $DEVICES \
   -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
-  camera-ping-pong
+  -v "$PROJECT_DIR":/app \
+  -w /app \
+  $DEVICES \
+  $IMAGE_NAME \
+  bash -c "mkdir -p build && cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build --parallel \$(nproc) && ./build/CameraPingPong"
 
 xhost -local:docker

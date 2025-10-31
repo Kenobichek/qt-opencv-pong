@@ -9,13 +9,3 @@ RUN apt-get update && apt-get install -y \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY . /app
-
-# ===== Stage 2: Runtime =====
-
-RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug \
- && cmake --build build --parallel $(nproc)
-
-WORKDIR /app/build
-
-CMD ["./CameraPingPong"]
