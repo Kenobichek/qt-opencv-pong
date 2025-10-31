@@ -5,7 +5,7 @@
 #include "../detector/HandDetector.h"
 #include "../renderer/Renderer.h"
 #include "../updater/FrameUpdater.h"
-#include "../game/GameLogic.h"
+#include "../game/logic/GameLogic.h"
 
 struct GameContext {
 	std::unique_ptr<App> app;

@@ -28,9 +28,15 @@ void QtRenderer::render(const Frame& frame, const GameState& state) {
 	cv::putText(mat, "Detected paddles: " + std::to_string(state.paddles.size()),
 				cv::Point(10,30), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255,255,255), 2);
 
-	const auto& ball = state.ball;
-	cv::circle(mat, cv::Point(static_cast<int>(ball.x), static_cast<int>(ball.y)),
-				static_cast<int>(ball.radius), cv::Scalar(0, 0, 255), -1);
+	for (const auto& ball : state.balls) {
+		cv::circle(
+			mat,
+			cv::Point(static_cast<int>(ball.x), static_cast<int>(ball.y)),
+			static_cast<int>(ball.radius),
+			cv::Scalar(0, 0, 255),
+			-1
+		);
+	}
 
 	cv::cvtColor(mat, mat, cv::COLOR_BGR2RGB);
 	QImage qimg(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);

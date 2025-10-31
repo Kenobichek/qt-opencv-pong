@@ -4,7 +4,7 @@
 #include "../detector/OpenCVHandDetector.h"
 #include "../renderer/QtRenderer.h"
 #include "../updater/QtFrameUpdater.h"
-#include "../game/DefaultGameLogic.h"
+#include "../game/logic/DefaultGameLogic.h"
 
 std::unique_ptr<GameContext> GameBuilder::build(int &argc, char **argv) {
 	auto ctx = std::make_unique<GameContext>();

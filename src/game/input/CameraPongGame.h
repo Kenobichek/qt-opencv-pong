@@ -1,5 +1,5 @@
 #pragma once
-#include "GameContext.h"
+#include "../../builder/GameContext.h"
 
 class CameraPongGame {
 	public:

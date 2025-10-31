@@ -1,7 +1,7 @@
 #pragma once
 #include "../detector/HandDetector.h"
 #include "../dto/Frame.h"
-#include "../game/GameState.h"
+#include "../game/state/GameState.h"
 
 class Renderer {
 	public:

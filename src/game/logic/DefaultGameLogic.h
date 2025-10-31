@@ -1,5 +1,8 @@
 #pragma once
 #include "GameLogic.h"
+#include "../controller/PaddleController.h"
+#include "../controller/BallController.h"
+#include "../system/Collision.h"
 
 class DefaultGameLogic : public GameLogic {
 	public:
@@ -7,7 +10,7 @@ class DefaultGameLogic : public GameLogic {
 		void reset(GameState& state) override;
 
 	private:
-		void updatePaddles(GameState& state, const std::vector<Rect>& hands);
-		void updateBall(GameState& state, const float dt);
-		void checkCollisions(GameState& state);
+		PaddleController paddleController;
+		BallController ballController;
+		CollisionSystem collisionSystem;
 };
