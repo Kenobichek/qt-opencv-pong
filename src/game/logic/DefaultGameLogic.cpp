@@ -5,21 +5,20 @@ void DefaultGameLogic::update(
 	const std::vector<Rect>& hands, 
 	float dt
 ) {
-
-	paddleController.update(state, hands);
-	ballController.update(state, dt);
+	movementSystem_.update(state.balls, dt);
+	cameraInputSystem_.update(state.paddles, hands);
 	
-	std::vector<Collider*> colliders;
-	for (auto& ball : state.balls) colliders.push_back(&ball);
-	for (auto& paddle : state.paddles) colliders.push_back(&paddle);
+	std::vector<Entity*> all;
+	for (auto& ball : state.balls) all.push_back(&ball);
+	for (auto& paddle : state.paddles) all.push_back(&paddle);
 
-	collisionSystem.checkObjectCollisions(colliders);
+	collisionSystem_.checkCollisions(all, dt);
 
-	collisionSystem.checkBoundaryCollisions(colliders, 0.0f, state.screen.height());
+	for (auto& ball : state.balls) {
+		collisionSystem_.checkBoundaries(ball, 0.0f, state.screen.height());
+	}
 }
 
 void DefaultGameLogic::reset(GameState& state) {
 	state.scores = {0, 0};
-	state.paddles.clear();
-	state.balls.clear();
 }

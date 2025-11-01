@@ -1,12 +1,12 @@
 #pragma once
-#include "../entity/Collider.h"
+#include "../entity/Entity.h"
 #include <vector>
 
 class CollisionSystem {
 	public:
-		void checkObjectCollisions(std::vector<Collider*>& colliders);
-		void checkBoundaryCollisions(const std::vector<Collider*>& colliders, float top, float bottom);
+		void checkCollisions(std::vector<Entity*>& objects, float dt);
+		void checkBoundaries(Entity& obj, float top, float bottom);
 
 	private:
-		bool isColliding(const Collider& a, const Collider& b);
+		void handleCollision(Entity& a, Entity& b, float dt);
 };

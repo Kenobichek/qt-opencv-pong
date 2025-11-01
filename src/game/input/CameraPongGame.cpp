@@ -1,5 +1,4 @@
 #include "CameraPongGame.h"
-#include <iostream>
 
 CameraPongGame::CameraPongGame(std::unique_ptr<GameContext> ctx)
 	: ctx_(std::move(ctx)) 
@@ -10,7 +9,6 @@ CameraPongGame::CameraPongGame(std::unique_ptr<GameContext> ctx)
 }
 
 int CameraPongGame::run() {
-	std::cout << "Running..." << std::endl;
 	return ctx_->app->exec(); 
 }
 

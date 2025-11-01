@@ -1,8 +1,8 @@
 #pragma once
 #include "GameLogic.h"
-#include "../controller/PaddleController.h"
-#include "../controller/BallController.h"
 #include "../system/Collision.h"
+#include "../system/Movement.h"
+#include "../system/CameraInput.h"
 
 class DefaultGameLogic : public GameLogic {
 	public:
@@ -10,7 +10,7 @@ class DefaultGameLogic : public GameLogic {
 		void reset(GameState& state) override;
 
 	private:
-		PaddleController paddleController;
-		BallController ballController;
-		CollisionSystem collisionSystem;
+		CollisionSystem collisionSystem_;
+		MovementSystem movementSystem_;
+		CameraInputSystem cameraInputSystem_;
 };
