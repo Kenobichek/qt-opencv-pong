@@ -1,0 +1,25 @@
+name: Camera Ping Pong Build & Test
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t camera-ping-pong .
+
+      - name: Run tests
+        run: |
+          ./run_tests.sh
