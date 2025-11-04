@@ -22,4 +22,4 @@ jobs:
 
       - name: Run tests
         run: |
-          docker run --rm camera-ping-pong ./run_tests.sh
+          ./run_tests.sh
