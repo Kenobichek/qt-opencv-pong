@@ -26,7 +26,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             git \
-            build-essential cmake qtbase5-dev libqt5widgets5 libopencv-dev libgl1
+            build-essential cmake qtbase5-dev libqt5widgets5 libopencv-dev libgl1 \
+            libgcc-s1
 
       # ---------- macOS setup ----------
       - name: Install dependencies (macOS)
@@ -43,6 +44,7 @@ jobs:
           curl -L -o qt.7z https://download.qt.io/archive/qt/5.15/5.15.2/windows/qt-opensource-windows-x86-5.15.2.7z
           7z x qt.7z -oC:\Qt
           setx QT_PATH "C:\Qt\5.15.2\msvc2019_64\bin"
+          setx PATH "%QT_PATH%;%PATH%"
 
       # ---------- Build ----------
       - name: Build project
