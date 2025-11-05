@@ -4,6 +4,12 @@ project(CameraPingPong VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(UNIX AND NOT APPLE)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+    set(BUILD_SHARED_LIBS OFF)
+    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+endif()
+
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 set(OpenCV_STATIC ON)
@@ -21,13 +27,6 @@ target_link_libraries(CameraPingPongLib PUBLIC Qt5::Widgets ${OpenCV_LIBS})
 
 add_executable(CameraPingPong src/main.cpp)
 target_link_libraries(CameraPingPong PRIVATE CameraPingPongLib)
-
-if(UNIX AND NOT APPLE)
-    set_target_properties(CameraPingPong PROPERTIES
-            LINK_SEARCH_START_STATIC TRUE
-            LINK_SEARCH_END_STATIC TRUE
-    )
-endif()
 
 enable_testing()
 add_subdirectory(tests)
