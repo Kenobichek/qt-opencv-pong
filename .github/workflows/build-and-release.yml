@@ -39,7 +39,10 @@ jobs:
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
-          choco install -y cmake qt5 opencv
+          choco install -y cmake opencv
+          curl -L -o qt.7z https://download.qt.io/archive/qt/5.15/5.15.2/windows/qt-opensource-windows-x86-5.15.2.7z
+          7z x qt.7z -oC:\Qt
+          setx QT_PATH "C:\Qt\5.15.2\msvc2019_64\bin"
 
       # ---------- Build ----------
       - name: Build project
