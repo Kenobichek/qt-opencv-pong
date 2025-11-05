@@ -38,24 +38,33 @@ jobs:
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
-          choco install -y cmake opencv
-          curl -L -o qt.7z https://download.qt.io/archive/qt/5.15/5.15.2/windows/qt-opensource-windows-x86-5.15.2.7z
+          choco install -y cmake opencv 7zip
+          curl -L -o qt.7z https://download.qt.io/archive/qt/5.15/5.15.2/qt-opensource-windows-x86-5.15.2.7z
           7z x qt.7z -oC:\Qt
-          setx QT_PATH "C:\Qt\5.15.2\msvc2019_64\bin"
-          setx PATH "%QT_PATH%;%PATH%"
+          echo "QT_PATH=C:\Qt\5.15.2\msvc2019_64" | Out-File -FilePath $Env:GITHUB_ENV -Append
 
       # ---------- Build ----------
-      - name: Build project
+      - name: Configure project (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:/Qt/5.15.2/msvc2019_64"
+
+      - name: Configure project (non-Windows)
+        if: runner.os != 'Windows'
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build project
+        run: |
           cmake --build build --config Release --parallel
 
       # ---------- Package ----------
       - name: Package binary
+        shell: bash
         run: |
           mkdir -p artifacts
           if [ "${{ runner.os }}" == "Windows" ]; then
-            cp build/Release/*.exe artifacts/CameraPingPong-windows.exe || cp build/*.exe artifacts/CameraPingPong-windows.exe
+            cp build/Release/*.exe artifacts/CameraPingPong-windows.exe 2>/dev/null || cp build/*.exe artifacts/CameraPingPong-windows.exe
           elif [ "${{ runner.os }}" == "macOS" ]; then
             cp -r build/CameraPingPong.app artifacts/CameraPingPong-macos.app
           else
