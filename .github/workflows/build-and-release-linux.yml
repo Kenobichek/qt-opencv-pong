@@ -22,7 +22,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            build-essential cmake qtbase5-dev libopencv-dev libgl1 patchelf wget
+            build-essential cmake qtbase5-dev libopencv-dev libgl1 patchelf wget qt5-qmake qttools5-dev-tools
 
       # ---------- Build project ----------
       - name: Build project
@@ -36,15 +36,17 @@ jobs:
           wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
           chmod +x linuxdeployqt-continuous-x86_64.AppImage
 
+      # ---------- Copy resources ----------
+      - name: Copy resources to build dir
+        run: |
+          cp resources/CameraPingPong.desktop build/
+          cp resources/icon.png build/
+
       # ---------- Package AppImage ----------
       - name: Package AppImage
         run: |
-          sudo apt-get install qt5-qmake qttools5-dev-tools
           mkdir -p artifacts
-          ./linuxdeployqt-continuous-x86_64.AppImage build/CameraPingPong \
-              -appimage \
-              -desktop-file=resources/CameraPingPong.desktop \
-              -icon-file=resources/icon.png
+          ./linuxdeployqt-continuous-x86_64.AppImage build/CameraPingPong -appimage
           mv build/*.AppImage artifacts/
 
       # ---------- Upload AppImage artifact ----------
