@@ -39,9 +39,13 @@ jobs:
       # ---------- Package AppImage ----------
       - name: Package AppImage
         run: |
+          sudo apt-get install qt5-qmake qttools5-dev-tools
           mkdir -p artifacts
-          ./linuxdeployqt-continuous-x86_64.AppImage build/CameraPingPong -appimage
-          mv *.AppImage artifacts/
+          ./linuxdeployqt-continuous-x86_64.AppImage build/CameraPingPong \
+              -appimage \
+              -desktop-file=resources/CameraPingPong.desktop \
+              -icon-file=resources/icon.png
+          mv build/*.AppImage artifacts/
 
       # ---------- Upload AppImage artifact ----------
       - name: Upload AppImage
