@@ -13,45 +13,55 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      # ---------- Checkout ----------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ---------- Install dependencies ----------
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
             build-essential cmake qtbase5-dev libopencv-dev libgl1 patchelf wget
 
+      # ---------- Build project ----------
       - name: Build project
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build --parallel
 
+      # ---------- Download linuxdeployqt ----------
       - name: Download linuxdeployqt
         run: |
           wget https://github.com/AppImage/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
           chmod +x linuxdeployqt-continuous-x86_64.AppImage
 
+      # ---------- Package AppImage ----------
       - name: Package AppImage
         run: |
+          mkdir -p artifacts
           ./linuxdeployqt-continuous-x86_64.AppImage build/CameraPingPong -appimage
+          mv *.AppImage artifacts/
 
+      # ---------- Upload AppImage artifact ----------
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
         with:
           name: CameraPingPong-AppImage
-          path: *.AppImage
+          path: artifacts/*.AppImage
 
   release:
     runs-on: ubuntu-22.04
     needs: build
 
     steps:
+      # ---------- Download artifact ----------
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           path: artifacts
 
+      # ---------- Create GitHub Release ----------
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
