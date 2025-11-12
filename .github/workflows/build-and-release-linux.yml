@@ -1,0 +1,74 @@
+name: Build and Release (CameraPingPong - Linux)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build on Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      # ---------- Checkout ----------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ---------- Install dependencies ----------
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git \
+            build-essential \
+            cmake \
+            qtbase5-dev \
+            libqt5widgets5 \
+            libopencv-dev \
+            libgl1 \
+            patchelf
+
+      # ---------- Build ----------
+      - name: Configure project
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build project
+        run: cmake --build build --config Release --parallel
+
+      # ---------- Package ----------
+      - name: Package binary
+        run: |
+          mkdir -p artifacts
+          cp build/CameraPingPong artifacts/CameraPingPong-linux
+          patchelf --set-rpath '$ORIGIN' artifacts/CameraPingPong-linux || true
+          ldd build/CameraPingPong \
+            | awk '/=>/ {print $3} /ld-linux/ {print $1}' \
+            | grep -vE '^$|^/lib|^/usr/lib/x86_64-linux-gnu/(libc|libm|libpthread|ld-linux|librt|libdl|libX11|libGL|libgcc_s|libstdc\+\+)' \
+            | sort -u \
+            | xargs -I '{}' cp -v '{}' artifacts/ || true
+
+      # ---------- Upload artifacts ----------
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: CameraPingPong-linux
+          path: artifacts/*
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
