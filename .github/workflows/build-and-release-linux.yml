@@ -1,4 +1,4 @@
-name: Build and Release (CameraPingPong - Linux)
+name: Build and Release CameraPingPong (Linux AppImage)
 
 on:
   push:
@@ -10,68 +10,51 @@ permissions:
 
 jobs:
   build:
-    name: Build on Linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      # ---------- Checkout ----------
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ---------- Install dependencies ----------
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            git \
-            build-essential \
-            cmake \
-            qtbase5-dev \
-            libqt5widgets5 \
-            libopencv-dev \
-            libgl1 \
-            patchelf
-
-      # ---------- Build ----------
-      - name: Configure project
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+            build-essential cmake qtbase5-dev libopencv-dev libgl1 patchelf wget
 
       - name: Build project
-        run: cmake --build build --config Release --parallel
-
-      # ---------- Package ----------
-      - name: Package binary
         run: |
-          mkdir -p artifacts
-          cp build/CameraPingPong artifacts/CameraPingPong-linux
-          patchelf --set-rpath '$ORIGIN' artifacts/CameraPingPong-linux || true
-          ldd build/CameraPingPong \
-            | awk '/=>/ {print $3} /ld-linux/ {print $1}' \
-            | grep -vE '^$|^/lib|^/usr/lib/x86_64-linux-gnu/(libc|libm|libpthread|ld-linux|librt|libdl|libX11|libGL|libgcc_s|libstdc\+\+)' \
-            | sort -u \
-            | xargs -I '{}' cp -v '{}' artifacts/ || true
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --parallel
 
-      # ---------- Upload artifacts ----------
-      - name: Upload artifacts
+      - name: Download linuxdeployqt
+        run: |
+          wget https://github.com/AppImage/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+          chmod +x linuxdeployqt-continuous-x86_64.AppImage
+
+      - name: Package AppImage
+        run: |
+          ./linuxdeployqt-continuous-x86_64.AppImage build/CameraPingPong -appimage
+
+      - name: Upload AppImage
         uses: actions/upload-artifact@v4
         with:
-          name: CameraPingPong-linux
-          path: artifacts/*
+          name: CameraPingPong-AppImage
+          path: *.AppImage
 
   release:
-    name: Create GitHub Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
 
     steps:
-      - name: Download artifacts
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           path: artifacts
 
-      - name: Create Release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/**/*
+          files: artifacts/*.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
