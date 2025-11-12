@@ -46,8 +46,15 @@ jobs:
       - name: Package AppImage
         run: |
           mkdir -p artifacts
-          ./linuxdeployqt-continuous-x86_64.AppImage build/CameraPingPong -appimage
-          mv build/*.AppImage artifacts/
+          shopt -s nullglob
+          APP_BINARY=build/CameraPingPong
+          if [ -f "$APP_BINARY" ]; then
+            ./linuxdeployqt-continuous-x86_64.AppImage "$APP_BINARY" -appimage
+            mv *.AppImage artifacts/
+          else
+            echo "Error: Binary $APP_BINARY not found"
+            exit 1
+          fi
 
       # ---------- Upload AppImage artifact ----------
       - name: Upload AppImage
